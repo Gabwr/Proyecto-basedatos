@@ -49,8 +49,8 @@ VALUES (1, '2025-03-05', '2025-03-10', 'Pendiente', 'Transferencia bancaria');
 
 /*fin script pruebas*/
 /* Definición pujas*/
-INSERT INTO PUJA (VEHICULO_ID, SUBASTA_ID, USUARIO_ID, PUJA_MONTO, PUJA_FECHA, PUJA_GANADOR, PUJA_ESTADO)
-VALUES (5, 4, 100, 12500.00, '2025-03-02 12:00:00', FALSE, 'Pendiente');
+#INSERT INTO PUJA (VEHICULO_ID, SUBASTA_ID, USUARIO_ID, PUJA_MONTO, PUJA_FECHA, PUJA_GANADOR, PUJA_ESTADO)
+#VALUES (5, 4, 100, 12500.00, '2025-03-02 12:00:00', FALSE, 'Pendiente');
 /*antes de insercion:
 	si usuario id tiene estado= cuenta desactivada -> no puede ingresar de ese usuario y detiene el ingreso
 	fecha de la puja entre la fecha inicial y fecha final de la subasta
