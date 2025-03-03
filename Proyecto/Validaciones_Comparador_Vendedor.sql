@@ -25,7 +25,7 @@ DETERMINISTIC
 begin
 declare valido bool;
 #valida usando una expresión regular
-select telefono regexp "^[0-9]{10}$" into valido;
+select telefono regexp "^09{1}[0-9]{8}$" into valido;
 return valido;
 end;\\
 #drop function validar_telefono;
@@ -39,7 +39,7 @@ DETERMINISTIC
 begin
 declare valido bool;
 #valida usando una expresión regular
-select cedula regexp "^[0-9]{10}$" into valido;
+select cedula regexp "^(0[1-9]|1[0-9]|2[0-4]){1}[0-9]{8}$" into valido;
 return valido;
 end;\\
 #Ejemplos
@@ -283,6 +283,7 @@ select new.usuario_id into id;
 select old.usuario_nombre into nombre;
 select old.usuario_apellido into apellido;
 if new.usuario_estado='Inactivo' then set descripcion=concat("Eliminacion de cuenta del vendedor N°",id," ",nombre," ",apellido);
+call eliminar_vendedor(new.usuario_id);
 else
 if new.usuario_nombre!=old.usuario_nombre then 
 set cnombre=concat("Cambio de nombre de",old.usuario_nombre," a ",new.usuario_nombre,",");
@@ -338,7 +339,8 @@ declare id int;
 select new.usuario_id into id;
 select old.usuario_nombre into nombre;
 select old.usuario_apellido into apellido;
-if new.usuario_estado='Inactivo' then set descripcion=concat("Eliminacion de cuenta del vendedor N°",id," ",nombre," ",apellido);
+if new.usuario_estado='Inactivo' then set descripcion=concat("Eliminacion de cuenta del comprador N°",id," ",nombre," ",apellido);
+call eliminar_comprador(new.usuario_id);
 else
 if new.usuario_nombre!=old.usuario_nombre then 
 set cnombre=concat("Cambio de nombre de",old.usuario_nombre," a ",new.usuario_nombre,",");
@@ -368,9 +370,27 @@ if new.usuario_correo!=old.usuario_correo then
 set ccorreo=concat("Cambio de correo de",old.usuario_correo," a ",new.usuario_correo,",");
 else set ccorreo=""; 
 end if;
-set descripcion=concat("Actualizacion de datos del vendedor N°",nombre," ",apellido," ",cnombre, capellido,cced,ctelf,cclave, ccorreo,cdir);
+set descripcion=concat("Actualizacion de datos del comprador N°",nombre," ",apellido," ",cnombre, capellido,cced,ctelf,cclave, ccorreo,cdir);
 end if;
 insert into auditoria(auditoria.USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
 (id,now(),descripcion);
+end;
+++
+/*drop trigger registrar_ingreso_comprador;
+drop trigger registrar_ingreso_vendedor;*/
+
+#####Trigger para eliminar una cuenta
+delimiter ++
+create procedure eliminar_vendedor(in id INT)
+begin
+update vehiculo set vehiculo.VEHICULO_ESTADO='Retirado' where usuario_id=id;
 end;++
+
+delimiter ++
+create procedure eliminar_comprador(in id INT)
+begin
+update puja set puja.PUJA_ESTADO='Retirado' where usuario_id=id and puja.PUJA_ESTADO='Pendiente';
+end;++
+
+#drop trigger registrar_cambio_comprador;
 #drop trigger registrar_cambio_vendedor;
