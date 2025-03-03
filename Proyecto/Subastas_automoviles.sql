@@ -60,7 +60,10 @@ create table PAGO
    PAGO_FECHA           date,
    PAGO_FECHA_LIMITE    date,
    PAGO_ESTADO          varchar(16) Default "pendiente",
-   PAGO_METODO          varchar(64) not null,
+   /*estado: pendiente, pagado, cancelado*/
+   PAGO_METODO          varchar(64) default "por definir",
+   /*metodos de pago: por definir (inicial), efectivo, tarjeta de credito, tarjeta de debito,
+   transferencia, online*/
    primary key (PAGO_ID)
 );
 
@@ -118,6 +121,7 @@ create table VEHICULO
    VEHICULO_COLOR       varchar(32) not null,
    VEHICULO_KILOMETRAJE bigint not null,
    VEHICULO_ESTADO      varchar(32) default "disponible",
+   /*Estado puede ser disponible, vendido o retirado*/
    primary key (VEHICULO_ID)
 );
 
