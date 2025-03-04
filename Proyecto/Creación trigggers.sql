@@ -185,8 +185,8 @@ despues de la insercion:
 	solo se puede cambiar el estado a vendido, disponible y retirado
 despues de la update:
     si el auto tiene el estado  retirado, 
-    entonces las pujas de ese auto se desactivan si este no ha sido vendido comprobado en la tabla SUBASTA_VEHICULO
-    osea no esta en ninguna subasta
+    entonces las pujas de ese auto se desactivan si este no ha sido vendido comprobado en la 
+    tabla SUBASTA_VEHICULO osea no esta en ninguna subasta
     y se agrega en auditoria con la fecha de realización el id del usuario y en detalle que sea retiro auto
 */
 

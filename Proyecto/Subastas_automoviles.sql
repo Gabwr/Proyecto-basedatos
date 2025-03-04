@@ -4,22 +4,6 @@
 /*==============================================================*/
 
 
-drop table if exists AUDITORIA;
-
-drop table if exists COMPRADOR;
-
-drop table if exists PAGO;
-
-drop table if exists PUJA;
-
-drop table if exists SUBASTA;
-
-drop table if exists SUBASTA_VEHICULO;
-
-drop table if exists VEHICULO;
-
-drop table if exists VENDEDOR;
-
 /*==============================================================*/
 /* Table: AUDITORIA                                             */
 /*==============================================================*/
