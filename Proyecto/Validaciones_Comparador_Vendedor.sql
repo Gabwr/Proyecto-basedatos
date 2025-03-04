@@ -188,7 +188,7 @@ select new.usuario_id into id;
 select new.usuario_nombre into nombre;
 select new.usuario_apellido into apellido;
 set descripcion=concat("Creacion de usuario N°",nombre," ",apellido," como comprador");
-insert into auditoria(auditoria.USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
+insert into auditoria(auditoria.COM_USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
 (id,curdate(),descripcion);
 end;++
 #drop trigger registrar_ingreso_comprador;
@@ -204,7 +204,7 @@ select new.usuario_id into id;
 select new.usuario_nombre into nombre;
 select new.usuario_apellido into apellido;
 set descripcion=concat("Creacion de usuario N°",nombre," ",apellido," como vendedor");
-insert into auditoria(auditoria.USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
+insert into auditoria(auditoria.VEN_USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
 (id,now(),descripcion);
 end;++
 #drop trigger registrar_ingreso_vendedor;
@@ -315,7 +315,7 @@ else set ccorreo="";
 end if;
 set descripcion=concat("Actualizacion de datos del vendedor N°",nombre," ",apellido," ",cnombre, capellido,cced,ctelf,cclave, ccorreo,cdir);
 end if;
-insert into auditoria(auditoria.USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
+insert into auditoria(auditoria.VEN_USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
 (id,now(),descripcion);
 end;++
 
@@ -372,7 +372,7 @@ else set ccorreo="";
 end if;
 set descripcion=concat("Actualizacion de datos del comprador N°",nombre," ",apellido," ",cnombre, capellido,cced,ctelf,cclave, ccorreo,cdir);
 end if;
-insert into auditoria(auditoria.USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
+insert into auditoria(auditoria.COM_USUARIO_ID,auditoria.AUDITORIA_FECHA,auditoria.AUDITORIA_DETALLE) values
 (id,now(),descripcion);
 end;
 ++

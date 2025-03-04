@@ -5,18 +5,18 @@
 */
 /* script de prueba*/
 -- Insertar Vendedores
-INSERT INTO VENDEDOR (USUARIO_NOMBRE, USUARIO_APELLIDO, USUARIO_CEDULA, USUARIO_FNACIMIENTO, USUARIO_CORREO, USUARIO_CLAVE, USUARIO_TELEFONO, USUARIO_DIRRECCION, USUARIO_ESTADO)
+INSERT INTO VENDEDOR (USUARIO_NOMBRE, USUARIO_APELLIDO, USUARIO_CEDULA, USUARIO_FNACIMIENTO, USUARIO_CORREO, USUARIO_CLAVE, USUARIO_TELEFONO, USUARIO_DIRRECCION)
 VALUES 
-('Carlos', 'Gomez', '1234567890', '1985-06-15', 'carlos@gmail.com', 'clave123', '0987654321', 'Av. Principal 123', 'Activo'),
-('Ana', 'Martinez', '0987654321', '1990-04-20', 'ana@gmail.com', 'clave456', '0976543210', 'Calle Secundaria 456', 'Activo'),
-('Luis', 'Fernandez', '1122334455', '1982-11-30', 'luis@gmail.com', 'clave789', '0965432109', 'Av. Central 789', 'Activo');
+('Carlos', 'Gomez', '1234567890', '1985-06-15', 'carlos@gmail.com', 'clave123', '0987654321', 'Av. Principal 123'),
+('Ana', 'Martinez', '0987654321', '1990-04-20', 'ana@gmail.com', 'clave456', '0976543210', 'Calle Secundaria 456'),
+('Luis', 'Fernandez', '1122334455', '1982-11-30', 'luis@gmail.com', 'clave789', '0965432109', 'Av. Central 789');
 
 -- Insertar Compradores
-INSERT INTO COMPRADOR (USUARIO_NOMBRE, USUARIO_APELLIDO, USUARIO_CEDULA, USUARIO_FNACIMIENTO, USUARIO_CORREO, USUARIO_CLAVE, USUARIO_TELEFONO, USUARIO_DIRRECCION, USUARIO_ESTADO)
+INSERT INTO COMPRADOR (USUARIO_NOMBRE, USUARIO_APELLIDO, USUARIO_CEDULA, USUARIO_FNACIMIENTO, USUARIO_CORREO, USUARIO_CLAVE, USUARIO_TELEFONO, USUARIO_DIRRECCION)
 VALUES 
-('Maria', 'Lopez', '2233445566', '1995-02-10', 'maria@gmail.com', 'pass123', '0954321098', 'Calle A 100', 'Activo'),
-('Pedro', 'Ramirez', '3344556677', '1988-09-25', 'pedro@gmail.com', 'pass456', '0943210987', 'Av. B 200', 'Activo'),
-('Sofia', 'Hernandez', '4455667788', '1992-07-14', 'sofia@gmail.com', 'pass789', '0932109876', 'Calle C 300', 'Activo');
+('Maria', 'Lopez', '2233445566', '1995-02-10', 'maria@gmail.com', 'pass123', '0954321098', 'Calle A 100'),
+('Pedro', 'Ramirez', '2344556677', '1988-09-25', 'pedro@gmail.com', 'pass456', '0943210987', 'Av. B 200'),
+('Sofia', 'Hernandez', '1455667788', '1992-07-14', 'sofia@gmail.com', 'pass789', '0932109876', 'Calle C 300');
 
 -- Insertar Vehículos (asignando a los vendedores creados, IDs del 1 al 3)
 INSERT INTO VEHICULO (USUARIO_ID, VEHICULO_MARCA, VEHICULO_MODELO, VEHICULO_ANIO, VEHICULO_PRECIO_BASE, VEHICULO_PLACA, VEHICULO_COLOR, VEHICULO_KILOMETRAJE, VEHICULO_ESTADO)
