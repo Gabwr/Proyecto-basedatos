@@ -58,13 +58,11 @@ BEGIN
 		END IF;
 
     
-
     IF fecha_hoy NOT BETWEEN fecha_init_subasta AND fecha_end_subasta THEN
     SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'No se puede ingresar el vehiculo en una subasta que ya ha terminado';
     END IF;
     
-    /*Comprueba que haya puesto un estado en falso, y no en verdadero*/
     SELECT v.VEHICULO_ESTADO INTO  estado_vehiculo 
     FROM VEHICULO v WHERE v.VEHICULO_ID= new.VEHICULO_ID;
     
@@ -92,7 +90,7 @@ BEGIN
     SELECT USUARIO_ID INTO usuario FROM VENDEDOR WHERE USUARIO_ID IN (SELECT USUARIO_ID FROM VEHICULO WHERE VEHICULO_ID = new.VEHICULO_ID);
     
     INSERT INTO AUDITORIA (VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-    VALUES (usuario, CURRENT_TIMESTAMP ,"inscripción subasta");
+    VALUES (usuario, CURRENT_TIMESTAMP ,CONCAT("inscripción de un vehiculo en la subasta ",new.AUDITORIA_ID));
     
 END//
 DELIMITER ;
