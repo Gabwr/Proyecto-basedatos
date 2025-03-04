@@ -83,7 +83,7 @@ CREATE TRIGGER `despues_actualizar_vehiculo` AFTER UPDATE ON `vehiculo` FOR EACH
             
             
 	INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-    VALUES (0,NEW.USUARIO_ID, NOW(), 'Retirado');
+    VALUES (NULL,NEW.USUARIO_ID, NOW(), 'Retirado');
         
     END IF;
     
@@ -105,7 +105,7 @@ DELIMITER $$
 CREATE TRIGGER `despues_insercion_vehiculo` AFTER INSERT ON `vehiculo` FOR EACH ROW BEGIN
     -- Insertar el registro en la tabla auditoria
     INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-    VALUES (NEW.USUARIO_ID,NEW.USUARIO_ID, NOW(), 'Inserción vehículo');
+    VALUES (NULL,NEW.USUARIO_ID, NOW(), 'Inserción vehículo');
 END
 $$
 DELIMITER ;
