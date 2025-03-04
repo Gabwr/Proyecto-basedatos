@@ -22,7 +22,6 @@ BEGIN
     WHERE PUJA_MONTO = monto_maximo
     AND SUBASTA_ID = (SELECT SUBASTA_ID FROM PUJA WHERE PUJA_ID = puja_id);
 
-
 END $$
 
 DELIMITER ;
@@ -56,17 +55,6 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE TRIGGER despues_insercion_pago
-AFTER INSERT ON PAGO
-FOR EACH ROW
-BEGIN
-    -- Insertar registro en AUDITORIA
-    INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-    VALUES (0, NOW(), 'Pago pendiente creado');
-END $$
-
-DELIMITER ;
-
 
 DELIMITER $$
 
@@ -82,6 +70,10 @@ BEGIN
 
         -- Llamada a la función para calcular el ganador (suponiendo que la función ya esté definida)
         CALL calcular_ganador(NEW.PUJA_ID);
+        
+		-- Insertar registro en AUDITORIA
+		INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+		VALUES (0, NOW(), 'Pago pendiente creado');
     END IF;
 END $$
 
