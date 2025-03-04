@@ -19,7 +19,7 @@ select validar_nombre("Jonás");
 select validar_nombre("Ñato1");*/
 #funcion para validar el celular
 delimiter \\
-CREATE FUNCTION validar_telefono(telefono varchar(250))
+CREATE FUNCTION validar_telefono(telefono varchar(11))
 RETURNS bool
 DETERMINISTIC
 begin
@@ -33,7 +33,7 @@ end;\\
 #El problema es que al poner un ingreso de varchar10, al ingresar más de eso ya no valida y pone
 #como si fuera verdadero. Eso ya no se puede restringir, por eso le puse de mas
 delimiter \\
-CREATE FUNCTION validar_cedula(cedula varchar(250))
+CREATE FUNCTION validar_cedula(cedula varchar(11))
 RETURNS bool
 DETERMINISTIC
 begin

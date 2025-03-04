@@ -62,7 +62,7 @@ FOR EACH ROW
 BEGIN
     -- Insertar registro en AUDITORIA
     INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-    VALUES (NEW.PUJA_ID, NOW(), 'Pago pendiente creado');
+    VALUES (0, NOW(), 'Pago pendiente creado');
 END $$
 
 DELIMITER ;
@@ -146,7 +146,7 @@ BEGIN
 
         -- Insertar en auditoria con el detalle 'Pago completado'
         INSERT INTO auditoria (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (NEW.PUJA_ID, NOW(), 'Pago completado');
+        VALUES (0, NOW(), 'Pago completado');
     END IF;
 
     -- Si el estado es 'retirado'
@@ -156,14 +156,14 @@ BEGIN
 
         -- Insertar en auditoria con el detalle 'Pago retirado'
         INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (NEW.PUJA_ID, NOW(), 'Pago retirado');
+        VALUES (0, NOW(), 'Pago retirado');
     END IF;
 
     -- Si el estado es 'pendiente'
     IF NEW.PAGO_ESTADO = 'pendiente' THEN
         -- Insertar en auditoria con el detalle 'Pago pendiente'
         INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (NEW.PUJA_ID, NOW(), 'Pago pendiente');
+        VALUES (0, NOW(), 'Pago pendiente');
     END IF;
 END $$
 

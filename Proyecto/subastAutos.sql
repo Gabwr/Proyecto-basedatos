@@ -1,8 +1,7 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     28/2/2025 19:41:17                           */
+/* Created on:     3/3/2025 21:40:04                            */
 /*==============================================================*/
-
 
 /*==============================================================*/
 /* Table: AUDITORIA                                             */
@@ -10,7 +9,8 @@
 create table AUDITORIA
 (
    AUDITORIA_ID         int not null auto_increment,
-   USUARIO_ID           int Default 0,
+   COM_USUARIO_ID       int,
+   VEN_USUARIO_ID       int,
    AUDITORIA_FECHA      datetime not null,
    AUDITORIA_DETALLE    text not null,
    primary key (AUDITORIA_ID)
@@ -43,7 +43,7 @@ create table PAGO
    PUJA_ID              int not null,
    PAGO_FECHA           date,
    PAGO_FECHA_LIMITE    date,
-   PAGO_ESTADO          varchar(16) Default "pendiente",
+   PAGO_ESTADO          varchar(16) default 'pendiente',
    /*estado: pendiente, pagado, cancelado*/
    PAGO_METODO          varchar(64) default "por definir",
    /*metodos de pago: por definir (inicial), efectivo, tarjeta de credito, tarjeta de debito,
@@ -57,13 +57,13 @@ create table PAGO
 create table PUJA
 (
    PUJA_ID              int not null auto_increment,
-   VEHICULO_ID          int not null,
-   SUBASTA_ID           int not null,
    USUARIO_ID           int not null,
-   PUJA_MONTO           decimal(10,2) not null,
+   SUBASTA_ID           int not null,
+   VEHICULO_ID          int not null,
+   PUJA_MONTO           decimal(7,2) not null,
    PUJA_FECHA           datetime not null,
    PUJA_GANADOR         bool,
-   PUJA_ESTADO          varchar(16) default "activo",
+   PUJA_ESTADO          varchar(16) default 'activo',
    primary key (PUJA_ID)
 );
 
@@ -100,12 +100,12 @@ create table VEHICULO
    VEHICULO_MARCA       varchar(64) not null,
    VEHICULO_MODELO      varchar(64) not null,
    VEHICULO_ANIO        int not null,
-   VEHICULO_PRECIO_BASE decimal(10,2) not null,
+   VEHICULO_PRECIO_BASE decimal(5,2) not null,
    VEHICULO_PLACA       varchar(10) not null,
    VEHICULO_COLOR       varchar(32) not null,
    VEHICULO_KILOMETRAJE bigint not null,
-   VEHICULO_ESTADO      varchar(32) default "disponible",
-   /*Estado puede ser disponible, vendido o retirado*/
+   VEHICULO_ESTADO      varchar(32) default 'disponible',
+	/*Estado puede ser disponible, vendido o retirado*/
    primary key (VEHICULO_ID)
 );
 
@@ -127,30 +127,30 @@ create table VENDEDOR
    primary key (USUARIO_ID)
 );
 
-alter table AUDITORIA add constraint FK_CONTROLA foreign key (USUARIO_ID)
+alter table AUDITORIA add constraint FK_FK_CONTROLA foreign key (COM_USUARIO_ID)
       references COMPRADOR (USUARIO_ID) on delete restrict on update restrict;
 
-alter table AUDITORIA add constraint FK_CONTROLA2 foreign key (USUARIO_ID)
+alter table AUDITORIA add constraint FK_FK_CONTROLA2 foreign key (VEN_USUARIO_ID)
       references VENDEDOR (USUARIO_ID) on delete restrict on update restrict;
 
-alter table PAGO add constraint FK_CORRESPONDE2 foreign key (PUJA_ID)
+alter table PAGO add constraint FK_FK_CORRESPONDE2 foreign key (PUJA_ID)
       references PUJA (PUJA_ID) on delete restrict on update restrict;
 
-alter table PUJA add constraint FK_REALIZA foreign key (USUARIO_ID)
+alter table PUJA add constraint FK_FK_REALIZA foreign key (USUARIO_ID)
       references COMPRADOR (USUARIO_ID) on delete restrict on update restrict;
 
-alter table PUJA add constraint FK_TIENE foreign key (SUBASTA_ID)
+alter table PUJA add constraint FK_FK_TIENE foreign key (SUBASTA_ID)
       references SUBASTA (SUBASTA_ID) on delete restrict on update restrict;
 
-alter table PUJA add constraint FK_VEHICULO_PUJA foreign key (VEHICULO_ID)
+alter table PUJA add constraint FK_FK_VEHICULO_PUJA foreign key (VEHICULO_ID)
       references VEHICULO (VEHICULO_ID) on delete restrict on update restrict;
 
-alter table SUBASTA_VEHICULO add constraint FK_SUBASTA_VEHICULO foreign key (VEHICULO_ID)
+alter table SUBASTA_VEHICULO add constraint FK_FK_SUBASTA_VEHICULO foreign key (VEHICULO_ID)
       references VEHICULO (VEHICULO_ID) on delete restrict on update restrict;
 
-alter table SUBASTA_VEHICULO add constraint FK_SUBASTA_VEHICULO2 foreign key (SUBASTA_ID)
+alter table SUBASTA_VEHICULO add constraint FK_FK_SUBASTA_VEHICULO2 foreign key (SUBASTA_ID)
       references SUBASTA (SUBASTA_ID) on delete restrict on update restrict;
 
-alter table VEHICULO add constraint FK_REGISTRA foreign key (USUARIO_ID)
+alter table VEHICULO add constraint FK_FK_REGISTRA foreign key (USUARIO_ID)
       references VENDEDOR (USUARIO_ID) on delete restrict on update restrict;
 

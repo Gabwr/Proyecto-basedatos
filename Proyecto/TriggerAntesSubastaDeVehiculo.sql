@@ -58,12 +58,12 @@ BEGIN
 		END IF;
 
     
-  
-    
+
     IF fecha_hoy NOT BETWEEN fecha_init_subasta AND fecha_end_subasta THEN
     SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'No se puede ingresar el vehiculo en una subasta que ya ha terminado';
     END IF;
+    
     /*Comprueba que haya puesto un estado en falso, y no en verdadero*/
     SELECT v.VEHICULO_ESTADO INTO  estado_vehiculo 
     FROM VEHICULO v WHERE v.VEHICULO_ID= new.VEHICULO_ID;
@@ -83,7 +83,7 @@ END//
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER trigger_antes_de_subastar_vehiculo
+CREATE TRIGGER trigger_despues_de_subastar_vehiculo
 AFTER INSERT
 ON SUBASTA_VEHICULO
 FOR EACH ROW
@@ -97,8 +97,8 @@ BEGIN
 END//
 DELIMITER ;
 
- DELIMITER //
-CREATE TRIGGER trigger_antes_de_subastar_vehiculo
+DELIMITER //
+CREATE TRIGGER trigger_antes_de_actualizar_subastar_vehiculo
 BEFORE UPDATE
 ON SUBASTA_VEHICULO
 FOR EACH ROW
@@ -123,7 +123,7 @@ END//
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER trigger_antes_de_subastar_vehiculo
+CREATE TRIGGER trigger_despues_de_actualizar_subastar_vehiculo
 AFTER UPDATE
 ON SUBASTA_VEHICULO
 FOR EACH ROW
@@ -132,26 +132,23 @@ BEGIN
     DECLARE vehiculo_modelo VARCHAR(64);
     DECLARE vehiculo_anio INT;
     DECLARE mensaje_auditoria TEXT;
-	DECLARE idsubasta INT;
-    
+
+    /* Recuperar información del vehículo */
     SELECT VEHICULO_MARCA, VEHICULO_MODELO, VEHICULO_ANIO 
     INTO vehiculo_marca, vehiculo_modelo, vehiculo_anio
     FROM VEHICULO 
     WHERE VEHICULO_ID = NEW.VEHICULO_ID;
-    
-    SELECT SUBASTA_ID 
-    INTO idsubasta
-    FROM SUBASTA 
-    WHERE SUBASTA_ID = NEW.SUBASTA_ID;
 
-    IF NEW.SUBASTA_VEHICULO_VENDIDO = TRUE THEN
-        SET mensaje_auditoria = CONCAT('Venta de vehiculo: ', vehiculo_marca, ' ',
-        vehiculo_modelo, ' (Año: ', vehiculo_anio, ') en la subasta: ',idsubasta);
-        
+    /* Verificar si el vehículo fue vendido */
+       IF NEW.SUBASTA_VEHICULO_VENDIDO = 1 THEN
+        SET mensaje_auditoria = CONCAT(
+            'Venta de vehículo: ', vehiculo_marca, ' ',
+            vehiculo_modelo, ' (Año: ', IFNULL(vehiculo_anio, '0'), 
+            ') en la subasta: ', NEW.SUBASTA_ID
+        );
         INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
         VALUES (0, CURRENT_TIMESTAMP, mensaje_auditoria);
     END IF;
-    
     
 END//
 DELIMITER ;

@@ -41,11 +41,5 @@ BEGIN
         SET MESSAGE_TEXT = 'El kilometraje debe de ser mayor a 0.';
     END IF;
     
-    
-    
-    
-    
-    
-    
 END $$
 DELIMITER ;
