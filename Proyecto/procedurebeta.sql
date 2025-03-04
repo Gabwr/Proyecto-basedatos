@@ -55,7 +55,7 @@ BEGIN
     SELECT SUBASTA_ID INTO ID_subasta FROM SUBASTA sb WHERE sb.SUBASTA_ID= subastaid;
     
     IF ID_subasta = null THEN
-        SELECT 'No se puede consultar el tiempo de una subasta no existente' AS Mensaje;
+        SELECT 'No se puede generar el pago de la subasta' AS Mensaje;
         RETURN NULL;
     END IF;
 
@@ -75,7 +75,7 @@ BEGIN
         RETURN NULL;
     END IF;
     
-    /*Recorrer todas las pujas ganadoras usando un WHILE*/
+    /*Recorrer todas las pujas ganadoras para realizar el pago*/
     WHILE contador < total_pujas DO
         /* Obtener la puja ganadora en la posición actual*/
         SELECT PUJA_ID, USUARIO_ID INTO ID_puja, ID_usuario  FROM PUJA WHERE SUBASTA_ID = subastaid 
@@ -90,7 +90,9 @@ BEGIN
 
        /*Agregar información al mensaje final*/
         SET mensaje = CONCAT(mensaje, 'Pago registrado para ', usuarionombre, ' por la puja #', ID_puja, '.  en la subasta',subastaid);
-
+	
+		INSERT INTO AUDITORIA (VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+			VALUES (0, CURRENT_TIMESTAMP, mensaje);
         /* Incrementar el contador*/
         SET contador = contador + 1;
     END WHILE;
