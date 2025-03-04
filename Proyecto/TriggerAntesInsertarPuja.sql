@@ -108,7 +108,7 @@ FOR EACH ROW
 BEGIN
     -- Verificar si el estado cambió de 'Activo' a 'Retirado' y agrega el cambio en auditoría
     IF OLD.PUJA_ESTADO = 'Activo' AND NEW.PUJA_ESTADO = 'Retirado' THEN
-        INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALL)
+        INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
         VALUES (NEW.USUARIO_ID, NULL, NOW(), CONCAT('Puja ID ', NEW.PUJA_ID, ' retirada por el comprador.'));
     END IF;
 END//
