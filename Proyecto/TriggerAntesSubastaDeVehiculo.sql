@@ -91,7 +91,7 @@ BEGIN
 	DECLARE usuario int;
     SELECT USUARIO_ID INTO usuario FROM VENDEDOR WHERE USUARIO_ID IN (SELECT USUARIO_ID FROM VEHICULO WHERE VEHICULO_ID = new.VEHICULO_ID);
     
-    INSERT INTO AUDITORIA ( USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    INSERT INTO AUDITORIA (VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
     VALUES (usuario, CURRENT_TIMESTAMP ,"inscripción subasta");
     
 END//
@@ -121,6 +121,7 @@ BEGIN
 END//
 
 DELIMITER ;
+drop TRIGGER trigger_despues_de_actualizar_subastar_vehiculo;
 
 DELIMITER //
 CREATE TRIGGER trigger_despues_de_actualizar_subastar_vehiculo
@@ -128,26 +129,24 @@ AFTER UPDATE
 ON SUBASTA_VEHICULO
 FOR EACH ROW
 BEGIN
-	DECLARE vehiculo_marca VARCHAR(64);
-    DECLARE vehiculo_modelo VARCHAR(64);
-    DECLARE vehiculo_anio INT;
-    DECLARE mensaje_auditoria TEXT;
+	DECLARE marca VARCHAR(64);
+    DECLARE modelo VARCHAR(64);
+    DECLARE anio INT;
+    DECLARE auditoria TEXT;
 
     /* Recuperar información del vehículo */
-    SELECT VEHICULO_MARCA, VEHICULO_MODELO, VEHICULO_ANIO 
-    INTO vehiculo_marca, vehiculo_modelo, vehiculo_anio
-    FROM VEHICULO 
-    WHERE VEHICULO_ID = NEW.VEHICULO_ID;
+    SELECT VEHICULO_MARCA INTO marca FROM VEHICULO WHERE VEHICULO_ID = 1;
+    SELECT VEHICULO_MODELO, VEHICULO_ANIO INTO modelo, anio
+    FROM VEHICULO WHERE VEHICULO_ID = NEW.VEHICULO_ID;
 
     /* Verificar si el vehículo fue vendido */
        IF NEW.SUBASTA_VEHICULO_VENDIDO = 1 THEN
-        SET mensaje_auditoria = CONCAT(
-            'Venta de vehículo: ', vehiculo_marca, ' ',
-            vehiculo_modelo, ' (Año: ', IFNULL(vehiculo_anio, '0'), 
-            ') en la subasta: ', NEW.SUBASTA_ID
+        SET auditoria = CONCAT('Venta de vehículo: '+ marca+ ' ',
+            modelo, ' Año: ', anio, 
+            ' en la subasta: ', NEW.SUBASTA_ID
         );
-        INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (0, CURRENT_TIMESTAMP, mensaje_auditoria);
+        INSERT INTO AUDITORIA (VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+        VALUES (0, CURRENT_TIMESTAMP, auditoria);
     END IF;
     
 END//
