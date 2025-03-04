@@ -108,7 +108,7 @@ END $$
 DELIMITER ;
 
 
-DELIMITER $$
+
 
 
 DELIMITER $$
@@ -195,8 +195,8 @@ BEGIN
         WHERE VEHICULO_ID = vehiculo_id;
 
         -- Insertar en auditoria con el detalle 'Pago completado'
-        INSERT INTO auditoria (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (0, NOW(), 'Pago completado');
+	INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    VALUES (NULL,NULL, NOW(), 'Pago completo');
     END IF;
 
     -- Si el estado es 'retirado'
@@ -205,8 +205,8 @@ BEGIN
         CALL calcular_ganador(NEW.PUJA_ID);
 
         -- Insertar en auditoria con el detalle 'Pago retirado'
-		INSERT INTO AUDITORIA (COM_USUARIO_ID, VEN_USUARIO_ID , AUDITORIA_FECHA, AUDITORIA_DETALLE)
-		VALUES (0,0, NOW(), 'Pago pendiente creado');
+		INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+		VALUES (NULL,NULL, NOW(), 'Pago pendiente creado');
     END IF;
 
     -- Si el estado es 'pendiente'
