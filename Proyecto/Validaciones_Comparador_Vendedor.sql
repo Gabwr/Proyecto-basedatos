@@ -82,7 +82,7 @@ create function validar_dir(direccion varchar (255))
 returns bool
 deterministic
 begin
-declare valido bool;
+declare valido bool;#Verifica la longitud
 if length(direccion)<=250 then set valido=true;
 else set valido=false;
 end if;
@@ -383,7 +383,7 @@ drop trigger registrar_ingreso_vendedor;*/
 delimiter ++
 create procedure eliminar_vendedor(in id INT)
 begin
-update vehiculo set vehiculo.VEHICULO_ESTADO='Retirado' where usuario_id=id;
+update vehiculo set vehiculo.VEHICULO_ESTADO='Retirado' where usuario_id=id and vehiculo_estado='Disponible';
 end;++
 
 delimiter ++
@@ -391,6 +391,6 @@ create procedure eliminar_comprador(in id INT)
 begin
 update puja set puja.PUJA_ESTADO='Retirado' where usuario_id=id and puja.PUJA_ESTADO='Pendiente';
 end;++
-
+drop procedure eliminar_vendedor;
 #drop trigger registrar_cambio_comprador;
 #drop trigger registrar_cambio_vendedor;
