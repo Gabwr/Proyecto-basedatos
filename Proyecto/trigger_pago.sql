@@ -1,3 +1,58 @@
+DROP TRIGGER antes_insercion_pago;
+DROP TRIGGER despues_insercion_pago_estado;
+DROP TRIGGER antes_actualizacion_pago;
+DROP TRIGGER despues_actualizacion_pago;
+DROP PROCEDURE IF EXISTS calcular_ganador;
+DROP EVENT IF EXISTS evento_verificar_pagos;
+
+
+
+DELIMITER $$
+
+CREATE EVENT IF NOT EXISTS evento_verificar_pagos
+ON SCHEDULE EVERY 1 DAY 
+DO
+BEGIN
+
+	DECLARE done INT; 
+    DECLARE puja_id INT;
+    DECLARE cur CURSOR FOR 
+        SELECT PUJA_ID FROM PAGO WHERE PAGO_FECHA_LIMITE > CURDATE();
+
+   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+   
+    SET done = 0;
+    
+    UPDATE PAGO
+    SET PAGO_ESTADO = 'Retirado'  -- Cambiar el estado a 'Retirado'
+    WHERE PAGO_FECHA_LIMITE < CURDATE()  -- Comparar si la fecha límite es menor que la fecha actual
+    AND PAGO_ESTADO = 'Pendiente';  
+
+
+   
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO puja_id;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        
+        CALL calcular_ganador(puja_id);
+
+    END LOOP;
+
+    CLOSE cur;
+
+    
+    INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    VALUES (NULL, NULL, NOW(), 'Pagos con fecha límite pasada actualizados y verificados');
+
+END $$
+
+DELIMITER ;
+
 
 
 
@@ -53,7 +108,7 @@ END $$
 DELIMITER ;
 
 
-DELIMITER $$
+
 
 
 DELIMITER $$
@@ -72,9 +127,12 @@ BEGIN
         CALL calcular_ganador(NEW.PUJA_ID);
         
 		-- Insertar registro en AUDITORIA
-		INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-		VALUES (0, NOW(), 'Pago pendiente creado');
+
     END IF;
+    
+	INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    VALUES (NULL,NULL, NOW(), 'Pago pendiente creado');
+
 END $$
 
 DELIMITER ;
@@ -137,8 +195,8 @@ BEGIN
         WHERE VEHICULO_ID = vehiculo_id;
 
         -- Insertar en auditoria con el detalle 'Pago completado'
-        INSERT INTO auditoria (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (0, NOW(), 'Pago completado');
+	INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    VALUES (NULL,NULL, NOW(), 'Pago completo');
     END IF;
 
     -- Si el estado es 'retirado'
@@ -147,15 +205,16 @@ BEGIN
         CALL calcular_ganador(NEW.PUJA_ID);
 
         -- Insertar en auditoria con el detalle 'Pago retirado'
-        INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (0, NOW(), 'Pago retirado');
+		INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+		VALUES (NULL,NULL, NOW(), 'Pago pendiente creado');
     END IF;
 
     -- Si el estado es 'pendiente'
     IF NEW.PAGO_ESTADO = 'pendiente' THEN
         -- Insertar en auditoria con el detalle 'Pago pendiente'
-        INSERT INTO AUDITORIA (USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
-        VALUES (0, NOW(), 'Pago pendiente');
+	INSERT INTO auditoria (COM_USUARIO_ID,VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+    VALUES (NULL,NULL, NOW(), 'Pago pendiente creado');
+
     END IF;
 END $$
 

@@ -1,3 +1,5 @@
+
+-- TRIGGER ANTES DE INSERTAR PUJA
 DELIMITER //
 CREATE TRIGGER trigger_antes_insertar_puja
 BEFORE INSERT
@@ -50,7 +52,7 @@ BEGIN
 	-- Verificar si el vehículo está retirado o vendido
     SELECT v.VEHICULO_ESTADO INTO estado_vehiculo FROM vehiculo v WHERE v.VEHICULO_ID= NEW.VEHICULO_ID;
     
-    IF estado_vehiculo IN ('retirado', 'vendido') THEN
+    IF estado_vehiculo IN ('Retirado', 'Vendido') THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'El vehículo ya está retirado o vendido y no puede recibir más pujas';
     END IF;
@@ -59,6 +61,7 @@ END//
 
 DELIMITER ;
 
+-- TRIGGER DESPUÉS DE INSERTAR PUJA
 DELIMITER //
 CREATE TRIGGER trigger_despues_insertar_puja
 AFTER INSERT ON puja
@@ -69,3 +72,48 @@ BEGIN
 END//
 
 DELIMITER ;
+
+-- TRIGGER ANTES DE ACTUALIZAR PUJA
+DELIMITER //
+
+CREATE TRIGGER antes_actualizar_puja
+BEFORE UPDATE ON puja
+FOR EACH ROW
+BEGIN
+    -- Verificar que solo se está intentando modificar PUJA_ESTADO y que sea un cambio de activo a retirado y no al revés
+    IF OLD.PUJA_ESTADO <> NEW.PUJA_ESTADO THEN
+        IF NOT (OLD.PUJA_ESTADO = 'Activo' AND NEW.PUJA_ESTADO = 'Retirado') THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Solo se permite cambiar el estado de activo a retirado';
+        END IF;
+    ELSE
+        IF OLD.PUJA_MONTO <> NEW.PUJA_MONTO OR
+           OLD.PUJA_FECHA <> NEW.PUJA_FECHA OR
+           OLD.PUJA_GANADOR <> NEW.PUJA_GANADOR THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se permite modificar otros campos excepto PUJA_ESTADO';
+        END IF;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+-- TRIGGER DESPUÉS DE ACTUALIZAR
+DELIMITER //
+
+CREATE TRIGGER despues_actualizar_puja
+AFTER UPDATE ON puja
+FOR EACH ROW
+BEGIN
+    -- Verificar si el estado cambió de 'Activo' a 'Retirado' y agrega el cambio en auditoría
+    IF OLD.PUJA_ESTADO = 'Activo' AND NEW.PUJA_ESTADO = 'Retirado' THEN
+        INSERT INTO auditoria (COM_USUARIO_ID, VEN_USUARIO_ID, AUDITORIA_FECHA, AUDITORIA_DETALLE)
+        VALUES (NEW.USUARIO_ID, NULL, NOW(), CONCAT('Puja ID ', NEW.PUJA_ID, ' retirada por el comprador.'));
+    END IF;
+END//
+
+DELIMITER ;
+
+
+
